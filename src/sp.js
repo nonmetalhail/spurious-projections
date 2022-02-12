@@ -251,7 +251,8 @@ class Spurious {
     this.ctx.font =  this.getFont(titleSize, this.fonts.roughType);
     this.ctx.fillText(title, 0, 30);
 
-    this.ctx.font = this.getFont(this.fonts.roughBody, this.fonts.roughType);;
+    this._measurementCanvas.font = this.getFont(this.fonts.roughBody, this.fonts.roughType);
+    this.ctx.font = this.getFont(this.fonts.roughBody, this.fonts.roughType);
     // xAxis
     this.rc.line(xRange[0], yRange[0], xRange[1], yRange[0]);
     for (const tick of xTicks) {
