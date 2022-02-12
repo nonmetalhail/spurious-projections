@@ -1,0 +1,10 @@
+#options {
+  display: grid;
+  grid-template-columns: 150px min-content;
+  gap: 2px 5px;
+  margin-bottom: 50px;
+}
+
+#options label {
+  justify-self: end;
+}

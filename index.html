@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spurious Projections</title>
+    <link type="text/css" rel="stylesheet" href="./src/sp.css"/>
+  </head>
+
+  <body>
+    <h3>Chart configuration</h3>
+    <div id="options">
+      <label for="title">Chart title</label>
+      <span><input type="text" id="title" name="title" size="100" value="Number of Big Earthquakes on the Hayward Fault"></span>
+
+      <label for="title">Value</label>
+      <span><input type="text" id="value" name="value" size="10" value="0"></span>
+
+      <label for="title">Start date</label>
+      <span><input type="text" id="start" name="start" size="10" value="1869"></span>
+
+      <label for="type">Sketchy</label>
+      <span><input type="checkbox" id="sketch" name="sketch"></span>
+
+      <button id="generate">Generate chart</button>
+    </div>
+    <div id="chart-container"></div>
+    <div id="img-container"></div>
+  </body>
+
+  <script type="module" src="src/sp.js"></script>
+</html>
