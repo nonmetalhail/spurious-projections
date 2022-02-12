@@ -8,9 +8,9 @@ import {
   scaleTime,
   utcFormat
 } from './d3_bundle/dist/spd3.js';
-
 import { default as Rough } from '../node_modules/roughjs/bundled/rough.esm.js'
 
+const handwriting = 'Nanum Pen Script';
 class Spurious {
   constructor() {
     this.sizing = {
@@ -21,6 +21,19 @@ class Spurious {
       margin: 3,
       titleSize: 50
     };
+    this.fonts = {
+      svgTitle: 25,
+      svgBody: 12,
+      svgType: 'serif',
+      roughTitle: 35,
+      roughBody: 20,
+      roughType: handwriting
+    };
+
+    const myFont = new FontFace(handwriting, "url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap')");
+    myFont.load().then((font) => {
+      document.fonts.add(font);
+    });
 
     document.getElementById('generate').addEventListener('click', this.createChart.bind(this));
     this.createMeasurementCanvas();
@@ -37,7 +50,6 @@ class Spurious {
   }
 
   createMeasurementCanvas() {
-    // const { size, family } = this._styles.text;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     ctx.width = 10;
@@ -45,14 +57,28 @@ class Spurious {
     this._measurementCanvas = ctx;
   }
 
+  getFont(size, type) {
+    return `${size}px ${type}`;
+  }
+
+  getTitleSize(size, type, title) {
+    let current = size + 1;
+    let width = Infinity;
+    while (width > this.sizing.width || current === 12) {
+      this._measurementCanvas.font = this.getFont(--current, type);
+      width = this._measurementCanvas.measureText(title).width;
+    }
+    return current;
+  }
+
   createChart() {
     this.img.innerHTML = '';
     const sketch = document.getElementById('sketch').checked;
     if (sketch) {
-      this._measurementCanvas.font =  '12px Comic Sans MS';
+      this._measurementCanvas.font = this.getFont(this.fonts.roughBody, this.fonts.roughType);
       this.createRoughChart();
     } else {
-      this._measurementCanvas.font =  '12px serif';
+      this._measurementCanvas.font = this.getFont(this.fonts.svgBody, this.fonts.svgType);
       this.createSvgChart();
     }
   }
@@ -115,11 +141,12 @@ class Spurious {
     const x = xScale(now);
     const y = yScale(value);
 
+    const titleSize = this.getTitleSize(this.fonts.svgTitle, this.fonts.svgType, title);
     this.svg.append('text')
       .text(title)
       .attr('x', 0)
       .attr('y', 30)
-      .attr('font-size', 25);
+      .attr('font-size', titleSize);
 
     const chart = this.svg.append('g')
       .attr('transform', `translate(0,${this.sizing.titleSize})`);
@@ -161,10 +188,6 @@ class Spurious {
       .attr('stroke', 'grey')
       .attr('stroke-width', 1)
       .attr('marker-end', 'url(#arrow)');
-
-
-    // this.container.innerHTML = '';
-    // this.container.appendChild(this.svg.node());
 
     const canvas = await this.placeSvgOnCanvas(this.svg.node());
     this.appendImage(canvas);
@@ -224,10 +247,11 @@ class Spurious {
       .domain(yDomain)
       .range(yRange);
 
-    this.ctx.font =  '22px Comic Sans MS';
+    const titleSize = this.getTitleSize(this.fonts.roughTitle, this.fonts.roughType, title);
+    this.ctx.font =  this.getFont(titleSize, this.fonts.roughType);
     this.ctx.fillText(title, 0, 30);
 
-    this.ctx.font =  '12px Comic Sans MS';
+    this.ctx.font = this.getFont(this.fonts.roughBody, this.fonts.roughType);;
     // xAxis
     this.rc.line(xRange[0], yRange[0], xRange[1], yRange[0]);
     for (const tick of xTicks) {
